@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+
+#build folder
+build
+.vs
+windows-fud-keylogger/keylog.txt
