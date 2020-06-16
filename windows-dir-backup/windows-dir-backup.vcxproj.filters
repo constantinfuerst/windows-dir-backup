@@ -21,10 +21,10 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="database\database-interface\db-interface.cpp">
+    <ClCompile Include="dir-change-hook\dch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="database\internal-structure\istr.cpp">
+    <ClCompile Include="dir-change-replicate\dcr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,10 +32,10 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="database\database-interface\db-interface.h">
+    <ClInclude Include="dir-change-hook\dch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="database\internal-structure\istr.h">
+    <ClInclude Include="dir-change-replicate\dcr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -91,8 +91,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="database\database-interface\db-interface.cpp" />
-    <ClCompile Include="database\internal-structure\istr.cpp" />
+    <ClCompile Include="dir-change-hook\dch.cpp" />
+    <ClCompile Include="dir-change-replicate\dcr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -100,8 +100,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="database\database-interface\db-interface.h" />
-    <ClInclude Include="database\internal-structure\istr.h" />
+    <ClInclude Include="dir-change-hook\dch.h" />
+    <ClInclude Include="dir-change-replicate\dcr.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
