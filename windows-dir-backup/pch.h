@@ -10,8 +10,8 @@
 #include <thread>
 
 //win32 api
-#include <fileapi.h>
 #include <windows.h>
+#include <fileapi.h>
 
 //define the minimum windows nt version
 //see last paragraph of https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-registerwaitforsingleobject

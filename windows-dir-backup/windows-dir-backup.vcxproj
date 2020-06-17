@@ -91,6 +91,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dir-change-hook\dch-process.cpp" />
+    <ClCompile Include="dir-change-hook\dch-watch.cpp" />
     <ClCompile Include="dir-change-hook\dch.cpp" />
     <ClCompile Include="dir-change-replicate\dcr.cpp" />
     <ClCompile Include="main.cpp" />

@@ -1,14 +1,9 @@
 #pragma once
 #include "pch.h"
 
-class dcr {
-public:
+namespace dcr {
 	enum change_type {
-		rename, move, write
+		add, del, mov, mod
 	};
-
-private:
-
-public:
-	bool replicate(change_type change, std::filesystem::path p_new, std::filesystem::path p_old);
+	bool replicate(change_type change, const std::wstring& p_new, const std::wstring& p_old = L"");
 };
