@@ -11,14 +11,6 @@ struct watch {
 	std::wstring dir;
 	HANDLE hDirHandle;
 	HANDLE hChangeEvent;
-	void* bBuffer;
-	OVERLAPPED* lpOverlapped;
-	DWORD* lpNOBT;
-
-	//to swap to a new buffer, should the supplied one be full but function does not check for free buffer space
-	//returns the pointer to the old and now unused buffer for the program to finish working on any new data added
-	//as the buffer* is atomic data may be slpit between the old and the current (newly swapped) buffer
-	void* swapBuffer();
 	
 	//destructor to provide cleanup
 	watch();
@@ -39,7 +31,7 @@ private:
 	//replication state in the buffer (incremented by one for the next function call)
 	//may take in a second "old" buffer produced by the "swapBuffer" function,
 	//fully consuming (including deletion) said buffer
-	static void processChange(unsigned int& buffer_pos, void* buffer, void* old_buffer = nullptr);
+	static void processChange(void* buffer);
 	
 public:
 	
