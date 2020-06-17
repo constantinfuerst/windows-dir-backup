@@ -2,22 +2,25 @@
 #include "dch.h"
 
 void dch::processChange(unsigned int& buffer_pos, void* buffer, void* old_buffer) {
-	void* local = nullptr;
+	void* bufCurrent = nullptr;
 	FILE_NOTIFY_INFORMATION* f = nullptr;
 	std::wstring rename;
 	
 restart:
-	if (old_buffer != nullptr) local = old_buffer;
-	else local = buffer;
+	if (old_buffer != nullptr) bufCurrent = old_buffer;
+	else bufCurrent = buffer;
 	///wrappers for old buffer before
 
 	do {
 		//obtain file change information structure
-		const auto lChar = static_cast<char*>(local);
-		f = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(lChar + buffer_pos);
+		//ugly type juggling, no idea how you're supposed to handle
+		//the windows api in this case, meh
+		char* bufChar = static_cast<char*>(bufCurrent);
+		bufChar += buffer_pos;
+		void* bufVoid = static_cast<void*>(bufChar);
+		f = static_cast<FILE_NOTIFY_INFORMATION*>(bufVoid);
 
 		//increment the buffer position
-		//TODO: will this result in the last entry to be registered twice?
 		buffer_pos += f->NextEntryOffset;
 
 		auto fname = std::wstring(f->FileName, f->FileNameLength);

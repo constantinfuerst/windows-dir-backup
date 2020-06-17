@@ -3,12 +3,13 @@
 #include "dir-change-hook/dch.h"
 
 int main() {
-	dch dirHook;
+	dch* dirHook = new dch;
 	
-	std::wstring folder = L"C:\\Users\\Admin\\Desktop\\foldermon";
-	dirHook.addWatch(folder);
+	std::wstring folder = L"C:\\Users\\Admin\\backup-test";
+	dirHook->addWatch(folder);
 
-	dirHook.launchWatch();
+	dirHook->launchWatch();
 
+	delete dirHook;
 	return 1;
 }

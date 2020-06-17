@@ -2,18 +2,18 @@
 #include "pch.h"
 #include "../dir-change-replicate/dcr.h"
 
-constexpr unsigned int BUFFER_SIZE = 65636;
+constexpr unsigned int BUFFER_SIZE = 128;
 
 //provide single interface for storage of relevant data and handles
 //used by the watch functions with automatic cleanup of data after use
 struct watch {
 	//stored relevant data
 	std::wstring dir;
-	HANDLE hDirHandle = NULL;
-	HANDLE hChangeEvent = NULL;
-	std::atomic<void*> bBuffer = new byte[BUFFER_SIZE];
-	LPOVERLAPPED lpOverlapped = new _OVERLAPPED;
-	LPDWORD lpNOBT = new DWORD(0);
+	HANDLE hDirHandle;
+	HANDLE hChangeEvent;
+	void* bBuffer;
+	OVERLAPPED* lpOverlapped;
+	DWORD* lpNOBT;
 
 	//to swap to a new buffer, should the supplied one be full but function does not check for free buffer space
 	//returns the pointer to the old and now unused buffer for the program to finish working on any new data added
@@ -21,14 +21,14 @@ struct watch {
 	void* swapBuffer();
 	
 	//destructor to provide cleanup
+	watch();
 	~watch();
-	watch() = default;
 };
 
 class dch {
 private:
 	static const DWORD p_filter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION;
-	static const short p_bmemsize = sizeof(_FILE_NOTIFY_INFORMATION);
+	
 	//access to a single watchlist element is not shared
 	//thereby it does not require any type of lock to prevent concurrent access
 	std::vector<watch*> p_watchlist;

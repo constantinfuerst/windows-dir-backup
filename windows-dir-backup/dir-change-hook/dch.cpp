@@ -6,10 +6,11 @@ dch::~dch() {
 }
 
 void* watch::swapBuffer() {
-	auto* old_buffer = bBuffer.load();
+	auto* old_buffer = bBuffer;
 	auto* new_buffer = new byte[BUFFER_SIZE];
+	memset(new_buffer, 0x00, BUFFER_SIZE);
 
-	bBuffer.exchange(new_buffer);
+	bBuffer = new_buffer;
 
 	return old_buffer;
 }
@@ -20,4 +21,13 @@ watch::~watch() {
 	delete lpOverlapped;
 	delete lpNOBT;
 	delete[] bBuffer;
+}
+
+watch::watch() {
+	hDirHandle = NULL;
+	hChangeEvent = NULL;
+	bBuffer = new byte[BUFFER_SIZE];
+	memset(bBuffer, 0x00, BUFFER_SIZE);
+	lpOverlapped = new OVERLAPPED();
+	lpNOBT = new DWORD(0);
 }

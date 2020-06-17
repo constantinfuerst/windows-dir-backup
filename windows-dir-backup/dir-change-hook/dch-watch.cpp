@@ -21,19 +21,19 @@ bool dch::addWatch(const std::wstring& dirname) {
 	p_watchlist.back()->hChangeEvent = CreateEventW(
 		NULL,
 		TRUE,
-		FALSE,
-		dirname.c_str()
+		NULL,
+		L"test12"
 	);
 	p_watchlist.back()->lpOverlapped->hEvent = p_watchlist.back()->hChangeEvent;
-
+	
 	//initialize directory change reader
 	ReadDirectoryChangesW(
 		p_watchlist.back()->hDirHandle,
-		&p_watchlist.back()->bBuffer,
+		p_watchlist.back()->bBuffer,
 		BUFFER_SIZE,
 		true,
 		p_filter,
-		NULL,
+		p_watchlist.back()->lpNOBT,
 		p_watchlist.back()->lpOverlapped,
 		NULL
 	);
@@ -47,22 +47,23 @@ void dch::watchThread(int i) {
 	unsigned int buffer_pos = 0;
 
 	while (true) {
-		GetOverlappedResultEx(
+		GetOverlappedResult(
 			p_watchlist[i]->hDirHandle,
 			p_watchlist[i]->lpOverlapped,
 			p_watchlist[i]->lpNOBT,
-			INFINITE,
 			true
 		);
 
-		//if buffer is close to full call to swap buffer
-		//this will atomically (without interruption hopefully) update to a new buffer
+		//if buffer is close to full: call to swap buffer
+		//this will (without interruption hopefully) update to a new buffer
 		free_buffer -= *p_watchlist[i]->lpNOBT;
 		if (free_buffer < 1024)
 			old_buffer = p_watchlist[i]->swapBuffer();
 
 		processChange(buffer_pos, p_watchlist[i]->bBuffer, old_buffer);
+		buffer_pos += *p_watchlist[i]->lpNOBT;
 
+		*p_watchlist[i]->lpNOBT = 0;
 		ResetEvent(p_watchlist[i]->hChangeEvent);
 	}
 }
