@@ -1,18 +1,23 @@
 #pragma once
 #include "pch.h"
+
+#include "../dir-watch-descriptor/dwd.h"
 #include "../dir-change-replicate/dcr.h"
 
+//TODO: maybe remove?
 constexpr unsigned int BUFFER_SIZE = 128;
 
 //provide single interface for storage of relevant data and handles
 //used by the watch functions with automatic cleanup of data after use
 struct watch {
 	//stored relevant data
-	std::wstring dir;
+	dwd* sData;
+	byte* bBuffer;
 	HANDLE hDirHandle;
 	HANDLE hChangeEvent;
 	
 	//destructor to provide cleanup
+	void refreshBuffer();
 	watch();
 	~watch();
 };
@@ -25,17 +30,17 @@ private:
 	//thereby it does not require any type of lock to prevent concurrent access
 	std::vector<watch*> p_watchlist;
 	
-	void watchThread(int i);
+	void watchThread(watch* data);
 	
 	//processes the recorded changes and returns the position of the current
 	//replication state in the buffer (incremented by one for the next function call)
 	//may take in a second "old" buffer produced by the "swapBuffer" function,
 	//fully consuming (including deletion) said buffer
-	static void processChange(void* buffer);
+	static void processChange(watch* data);
 	
 public:
 	
 	void launchWatch();
-	bool addWatch(const std::wstring& dirname);
+	bool addWatch(dwd* data);
 	~dch();
 };

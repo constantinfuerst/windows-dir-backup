@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "dch.h"
 
-bool dch::addWatch(const std::wstring& dirname) {
+bool dch::addWatch(dwd* data) {
 	//create new watch object
 	p_watchlist.emplace_back(new watch);
-	p_watchlist.back()->dir = dirname;
+	p_watchlist.back()->sData = data;
 
 	//obtain a handle to the directory watched
 	p_watchlist.back()->hDirHandle = CreateFileW(
-		dirname.c_str(),
+		data->dir_name.c_str(),
 		GENERIC_READ,
 		FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
 		NULL,
@@ -19,51 +19,52 @@ bool dch::addWatch(const std::wstring& dirname) {
 
 	//set overlapped structure for asynchronous operation
 	p_watchlist.back()->hChangeEvent = CreateEventW(
-		NULL, TRUE, NULL, dirname.c_str()
+		NULL, TRUE, NULL, data->dir_name.c_str()
 	);
 
 	return true;
 }
 
-void dch::watchThread(int i) {
+void dch::watchThread(watch* data) {
 	OVERLAPPED* lpOverlapped;
 	DWORD* lpNOBT = new DWORD(0);
-	byte* bBuffer = new byte[BUFFER_SIZE];
 
 	while (true) {
-		memset(bBuffer, 0x00, BUFFER_SIZE);
-		
 		//prime the file change event
 		lpOverlapped = new OVERLAPPED();
-		lpOverlapped->hEvent = p_watchlist.back()->hChangeEvent;
+		lpOverlapped->hEvent = data->hChangeEvent;
 
 		//initialize directory change reader
 		ReadDirectoryChangesW(
-			p_watchlist.back()->hDirHandle, bBuffer,
+			p_watchlist.back()->hDirHandle, data->bBuffer,
 			BUFFER_SIZE, true,
 			p_filter, lpNOBT, lpOverlapped, NULL
 		);
 		
 		//obtain result
 		GetOverlappedResult(
-			p_watchlist[i]->hDirHandle, lpOverlapped,
+			data->hDirHandle, lpOverlapped,
 			lpNOBT, true
 		);
 
 		//process the recorded change
-		processChange(bBuffer);
+		//TODO: consider doing the branch-off into a separate thread right here
+		//instead of branching at the end of the process change function
+		//as a possible test location if performance is not at the required level
+		processChange(data);
 
 		//prepare for restart
+		data->refreshBuffer();
 		delete lpOverlapped;
 		*lpNOBT = 0;
-		ResetEvent(p_watchlist[i]->hChangeEvent);
+		ResetEvent(data->hChangeEvent);
 	}
 }
 
 void dch::launchWatch() {
 	std::vector<std::thread> tpool;
-	for (int i = 0; i < p_watchlist.size(); i++) {
-		tpool.emplace_back(std::thread(&dch::watchThread, this, i));
+	for (watch* data : p_watchlist) {
+		tpool.emplace_back(std::thread(&dch::watchThread, this, data));
 	}
 	for (auto& e : tpool) {
 		e.join();

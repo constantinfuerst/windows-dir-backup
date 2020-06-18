@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "dch.h"
 
-void dch::processChange(void* buffer) {
+void dch::processChange(watch* data) {
 	FILE_NOTIFY_INFORMATION* f = nullptr;
 	unsigned int buffer_pos = 0;
 	std::wstring* rename = nullptr;
@@ -21,7 +21,7 @@ void dch::processChange(void* buffer) {
 		//obtain file change information structure
 		//ugly type juggling, no idea how you're supposed to handle
 		//the windows api in this case, meh
-		char* bufChar = static_cast<char*>(buffer);
+		char* bufChar = reinterpret_cast<char*>(data->bBuffer);
 		bufChar += buffer_pos;
 		void* bufVoid = static_cast<void*>(bufChar);
 		f = static_cast<FILE_NOTIFY_INFORMATION*>(bufVoid);
@@ -48,8 +48,13 @@ void dch::processChange(void* buffer) {
 
 		//spawn an independent thread to handle the replication of the change
 		if (call == true) {
-			//TODO: if performance is a concern in the future: consider implementation of a consumer/producer relationship here with synchronized queues and less thread creation/destruction for possible improvements
-			auto worker = std::thread(&dcr::replicate, change, fname, rename);
+			//TODO: if performance is a concern in the future:
+			//consider implementation of a consumer/producer relationship here
+			//with synchronized queues and less thread creation/destruction for
+			//possible improvements (including but not limited to:
+			//latency reduction caused by creating a bunch of threads and
+			//using less threads helping low-core-count machines)
+			auto worker = std::thread(&dcr::replicate, data->sData, change, fname, rename);
 			worker.detach();
 			rename = nullptr;
 			call = false;

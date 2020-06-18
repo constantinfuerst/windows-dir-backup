@@ -44,5 +44,8 @@
     <ClInclude Include="dir-change-replicate\dcr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="dir-watch-descriptor\dwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

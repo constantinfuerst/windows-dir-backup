@@ -1,10 +1,14 @@
 #pragma once
 #include "pch.h"
 
+#include "../dir-watch-descriptor/dwd.h"
+
 namespace dcr {
 	enum change_type {
-		add, del, mov, mod
+		none, add, del, mov, mod
 	};
-	
-	bool replicate(change_type change, std::wstring* name, std::wstring* old_name);
+
+	bool checkDirectory(const std::wstring* path);
+	void createDirectoryRecursive(const std::wstring* path);
+	bool replicate(dwd* data, change_type change, std::wstring* name, std::wstring* old_name);
 }
