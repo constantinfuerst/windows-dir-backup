@@ -30,6 +30,11 @@ void dch::watchThread(watch* data) {
 	DWORD* lpNOBT = new DWORD(0);
 
 	while (true) {
+		//TODO: find a way to permanently reuse the same "ReadDirectoryChanges"
+		//		together with the same overlapped structure
+		//		this would vastly increase performance and
+		//		eliminate the chance to miss a change
+		
 		//prime the file change event
 		lpOverlapped = new OVERLAPPED();
 		lpOverlapped->hEvent = data->hChangeEvent;
@@ -48,10 +53,14 @@ void dch::watchThread(watch* data) {
 		);
 
 		//process the recorded change
-		//TODO: consider doing the branch-off into a separate thread right here
-		//instead of branching at the end of the process change function
-		//as a possible test location if performance is not at the required level
-		processChange(data);
+		//TODO: if performance is a concern in the future (first try TD#33):
+		//		consider implementation of a consumer/producer relationship here
+		//		with synchronized queues and less thread creation/destruction for
+		//		possible improvements (including but not limited to:
+		//		latency reduction caused by creating a bunch of threads and
+		//		using less threads helping low-core-count machines)
+		auto t = std::thread(&dch::processChange, this, data);
+		t.detach();
 
 		//prepare for restart
 		data->refreshBuffer();

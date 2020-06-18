@@ -34,11 +34,11 @@ void dch::processChange(watch* data) {
 		//evaluate the obtained information
 		switch (f->Action) {
 		case FILE_ACTION_ADDED:
-			change = dcr::add; call = true;  break;
+			change = dcr::add; call = true; break;
 		case FILE_ACTION_REMOVED:
-			change = dcr::del; call = true;  break;
+			change = dcr::del; call = true; break;
 		case FILE_ACTION_MODIFIED:
-			change = dcr::mod; call = true;  break;
+			change = dcr::mod; call = true; break;
 		case FILE_ACTION_RENAMED_NEW_NAME:
 			re(fname); break;
 		case FILE_ACTION_RENAMED_OLD_NAME:
@@ -48,14 +48,7 @@ void dch::processChange(watch* data) {
 
 		//spawn an independent thread to handle the replication of the change
 		if (call == true) {
-			//TODO: if performance is a concern in the future:
-			//consider implementation of a consumer/producer relationship here
-			//with synchronized queues and less thread creation/destruction for
-			//possible improvements (including but not limited to:
-			//latency reduction caused by creating a bunch of threads and
-			//using less threads helping low-core-count machines)
-			auto worker = std::thread(&dcr::replicate, data->sData, change, fname, rename);
-			worker.detach();
+			dcr::replicate(data->sData, change, fname, rename);
 			rename = nullptr;
 			call = false;
 		}

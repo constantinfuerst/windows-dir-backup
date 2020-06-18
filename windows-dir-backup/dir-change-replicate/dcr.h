@@ -8,7 +8,5 @@ namespace dcr {
 		none, add, del, mov, mod
 	};
 
-	bool checkDirectory(const std::wstring* path);
-	void createDirectoryRecursive(const std::wstring* path);
 	bool replicate(dwd* data, change_type change, std::wstring* name, std::wstring* old_name);
 }

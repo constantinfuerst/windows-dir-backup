@@ -8,6 +8,7 @@ int main() {
 	
 	data->dir_name = L"C:\\Users\\Admin\\backup-test\\folder";
 	data->dest_name = L"C:\\Users\\Admin\\backup-test\\destination";
+	data->createBin(L"bin");
 
 	dirHook.addWatch(data);
 	dirHook.launchWatch();
