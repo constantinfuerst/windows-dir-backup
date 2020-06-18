@@ -4,7 +4,18 @@
 void dch::processChange(void* buffer) {
 	FILE_NOTIFY_INFORMATION* f = nullptr;
 	unsigned int buffer_pos = 0;
-	std::wstring rename;
+	std::wstring* rename = nullptr;
+	bool call = false;
+	dcr::change_type change;
+
+	//lamda for renaming cases
+	auto re = [&](std::wstring* fname) {
+		if (rename != nullptr) {
+			change = dcr::mov;
+			call = true;
+		}
+		else rename = new std::wstring(*fname);
+	};
 	
 	do {
 		//obtain file change information structure
@@ -18,25 +29,30 @@ void dch::processChange(void* buffer) {
 		//increment the buffer position
 		buffer_pos += f->NextEntryOffset;
 
-		auto fname = std::wstring(f->FileName, f->FileNameLength);
+		auto* fname = new std::wstring(f->FileName, f->FileNameLength);
+
+		//evaluate the obtained information
 		switch (f->Action) {
-		case FILE_ACTION_ADDED: dcr::replicate(dcr::add, fname); break;
-		case FILE_ACTION_REMOVED: dcr::replicate(dcr::del, fname); break;
-		case FILE_ACTION_MODIFIED: dcr::replicate(dcr::mod, fname); break;
+		case FILE_ACTION_ADDED:
+			change = dcr::add; call = true;  break;
+		case FILE_ACTION_REMOVED:
+			change = dcr::del; call = true;  break;
+		case FILE_ACTION_MODIFIED:
+			change = dcr::mod; call = true;  break;
 		case FILE_ACTION_RENAMED_NEW_NAME:
-			if (!rename.empty()) {
-				dcr::replicate(dcr::mov, fname, rename);
-				rename = L"";
-			}
-			else rename = fname;
-			break;
+			re(fname); break;
 		case FILE_ACTION_RENAMED_OLD_NAME:
-			if (!rename.empty()) {
-				dcr::replicate(dcr::mov, rename, fname);
-				rename = L"";
-			}
-			else rename = fname;
-			break;
+			re(fname); break;
+		default: break;
+		}
+
+		//spawn an independent thread to handle the replication of the change
+		if (call == true) {
+			//TODO: if performance is a concern in the future: consider implementation of a consumer/producer relationship here with synchronized queues and less thread creation/destruction for possible improvements
+			auto worker = std::thread(&dcr::replicate, change, fname, rename);
+			worker.detach();
+			rename = nullptr;
+			call = false;
 		}
 	} while (f->NextEntryOffset != 0);
 }
