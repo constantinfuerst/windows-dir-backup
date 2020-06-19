@@ -27,12 +27,6 @@
     <ClCompile Include="dir-change-replicate\dcr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dir-change-hook\dch-watch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="dir-change-hook\dch-process.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

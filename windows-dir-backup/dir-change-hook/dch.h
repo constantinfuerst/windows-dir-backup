@@ -4,43 +4,22 @@
 #include "../dir-watch-descriptor/dwd.h"
 #include "../dir-change-replicate/dcr.h"
 
-//TODO: maybe remove?
-constexpr unsigned int BUFFER_SIZE = 128;
-
-//provide single interface for storage of relevant data and handles
-//used by the watch functions with automatic cleanup of data after use
-struct watch {
-	//stored relevant data
-	dwd* sData;
-	byte* bBuffer;
-	HANDLE hDirHandle;
-	HANDLE hChangeEvent;
-	
-	//destructor to provide cleanup
-	void refreshBuffer();
-	watch();
-	~watch();
-};
-
 class dch {
-private:
-	static const DWORD p_filter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_SIZE | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_CREATION;
-	
-	//access to a single watchlist element is not shared
-	//thereby it does not require any type of lock to prevent concurrent access
-	std::vector<watch*> p_watchlist;
-	
-	void watchThread(watch* data);
-	
-	//processes the recorded changes and returns the position of the current
-	//replication state in the buffer (incremented by one for the next function call)
-	//may take in a second "old" buffer produced by the "swapBuffer" function,
-	//fully consuming (including deletion) said buffer
-	static void processChange(watch* data);
+	HANDLE drive_handle;
+	USN last_recorded_change;
+	DWORD output_buffer_size = 4096;
+	DWORD bytes_returned = 0;
+	byte* output_buffer;
+	std::wstring* drive_descriptor;
+	std::wstring* directory;
+
+	USN obtain_latest_usn_record();
+	void obtain_usn_record_list(USN start, USN end);
+	void process_usn_record_list();
+	static void process_usn_record(const PUSN_RECORD& record);
 	
 public:
-	
-	void launchWatch();
-	bool addWatch(dwd* data);
+
+	dch(const std::wstring& directory);
 	~dch();
 };
