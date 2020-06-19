@@ -8,13 +8,15 @@ int main() {
 	data->dest_name = L"C:\\Users\\Admin\\backup-test\\destination";
 	data->createBin(L"bin");
 
-	dch dir_hook(data->dir_name);
+	dch dir_hook(data);
 
-	dir_hook.test_init();
-
-	Sleep(1000);
-
-	dir_hook.test_start();
+	while(true) {
+		std::cout << "Test init" << std::endl;
+		dir_hook.test_init();
+		Sleep(10000);
+		std::cout << "Starting USN readout" << std::endl;
+		dir_hook.test_start();
+	}
 	
 	return 1;
 }
