@@ -1,3 +1,22 @@
+/* This application uses the USN journal. To understand what it's doing read through the msdevcenter documentation.
+ * Documentation of other used functions may also be found in this header.
+ *
+ * USN JOURNALING DOCUMENTATION
+ *		intro to USN journal and why it should be used: https://docs.microsoft.com/en-us/windows/win32/fileio/change-journals
+ *		function to read the required USN data: https://docs.microsoft.com/en-us/windows/win32/api/ioapiset/nf-ioapiset-deviceiocontrol
+ *				1: reading the currently in use journal: https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_query_usn_journal
+ *				   and the data returned by this: https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ns-winioctl-usn_journal_data_v2
+ *				2: obtain USN updates between two journal points: https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ni-winioctl-fsctl_read_usn_journal
+ *				   and the structure used to send these points: https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ns-winioctl-read_usn_journal_data_v0
+ *				   and one entry (fills buffer with many): https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ns-winioctl-usn_record_v2
+ *		the example by msft for obtaining and processing a journal record buffer: https://docs.microsoft.com/en-us/windows/win32/fileio/walking-a-buffer-of-change-journal-records
+ * OTHER
+ *		- obtain file handle by its USN-ID: https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-openfilebyid
+ *		  types of input for this function: https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-file_id_descriptor
+ * 
+ * 
+ */
+
 #include "pch.h"
 #include "dirmon.h"
 
