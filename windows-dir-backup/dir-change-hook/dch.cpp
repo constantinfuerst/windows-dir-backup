@@ -36,13 +36,13 @@ void dch::obtain_usn_record_list() {
 
 void dch::process_usn_record_list() {
 	DWORD r_bytes = bytes_returned - sizeof(USN);
-	auto* usn_record = reinterpret_cast<PUSN_RECORD>(static_cast<PUCHAR>(output_buffer) + sizeof(USN));
+	auto* usn_record = reinterpret_cast<PUSN_RECORD>(static_cast<PCHAR>(output_buffer) + sizeof(USN));
 
 	while (r_bytes > 0 && r_bytes < output_buffer_size) {
 		process_usn_record(usn_record);
 
 		r_bytes -= usn_record->RecordLength;
-		usn_record = reinterpret_cast<PUSN_RECORD>(static_cast<PUCHAR>(output_buffer) + usn_record->RecordLength);
+		usn_record = reinterpret_cast<PUSN_RECORD>(reinterpret_cast<PCHAR>(usn_record) + usn_record->RecordLength);
 	}
 
 	memset(output_buffer, 0x00, output_buffer_size);
@@ -64,7 +64,11 @@ void dch::process_usn_record(const PUSN_RECORD& record) {
 		FILE_FLAG_BACKUP_SEMANTICS
 	);
 
-	static const unsigned int buf_size = 128;
+	if (file == INVALID_HANDLE_VALUE) {
+		return;
+	}
+
+	static const unsigned int buf_size = 512;
 	auto* buf = new unsigned char[buf_size];
 	
 	GetFileInformationByHandleEx(
@@ -75,12 +79,13 @@ void dch::process_usn_record(const PUSN_RECORD& record) {
 	);
 
 	auto* ret = reinterpret_cast<FILE_NAME_INFO*>(buf);
-	
-	auto fname = std::wstring(ret->FileName, ret->FileNameLength);
+
+	auto fname = watch_data->dir_name.substr(0, 2) + std::wstring(ret->FileName, ret->FileNameLength / 2);
 
 	delete[] buf;
 	CloseHandle(file);
 
+	//TODO: make this actually work
 	auto member_directory = [&]() {
 		const unsigned int pos = fname.find_last_of(L"\\");
 		const std::wstring dirname = fname.substr(0, pos);
@@ -123,10 +128,36 @@ void dch::process_usn_record(const PUSN_RECORD& record) {
 	}
 }
 
+void dch::test_execute() {
+	auto jdata = obtain_latest_usn_record_number();
+	journal_id = jdata.UsnJournalID;
+
+	while (TRUE) {
+		last_recorded_change = jdata.NextUsn;
+
+		std::cout << "[+] waiting 5000ms" << std::endl;
+		Sleep(5000);
+
+		std::cout << "[+] obtaining current usn" << std::endl;
+		jdata = obtain_latest_usn_record_number();
+
+		obtain_usn_record_list();
+		if (bytes_returned > sizeof(USN)) {
+			std::cout << "[+] processing " << bytes_returned << "b of changes" << std::endl;
+			process_usn_record_list();
+		}
+		else {
+			std::cout << "[x] no changes detected" << std::endl;
+		}
+
+		std::cout << "//////////" << std::endl;
+	}
+}
+
 dch::dch(dwd* data_) {
 	watch_data = data_;
 	bytes_returned = 0;
-	output_buffer = new unsigned char[output_buffer_size];
+	output_buffer = new char[output_buffer_size];
 	memset(output_buffer, 0x00, output_buffer_size);
 	last_recorded_change = 0;
 	auto* drive_descriptor = new std::wstring(L"\\\\.\\" + watch_data->dir_name.substr(0, 2));

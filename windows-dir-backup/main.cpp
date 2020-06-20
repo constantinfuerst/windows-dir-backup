@@ -10,13 +10,7 @@ int main() {
 
 	dch dir_hook(data);
 
-	while(true) {
-		std::cout << "Test init" << std::endl;
-		dir_hook.test_init();
-		Sleep(10000);
-		std::cout << "Starting USN readout" << std::endl;
-		dir_hook.test_start();
-	}
+	dir_hook.test_execute();
 	
 	return 1;
 }
