@@ -92,18 +92,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dir-change-hook\dch.cpp" />
+    <ClCompile Include="dir-monitor\dirmon.cpp" />
     <ClCompile Include="dir-change-replicate\dcr.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="monitor\ms.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dir-change-hook\dch.h" />
+    <ClInclude Include="dir-monitor\dirmon.h" />
     <ClInclude Include="dir-change-replicate\dcr.h" />
-    <ClInclude Include="dir-watch-descriptor\dwd.h" />
+    <ClInclude Include="directory-data\dir-data.h" />
+    <ClInclude Include="monitor\ms.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

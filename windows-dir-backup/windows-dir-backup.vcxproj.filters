@@ -21,10 +21,13 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dir-change-hook\dch.cpp">
+    <ClCompile Include="dir-change-replicate\dcr.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="dir-change-replicate\dcr.cpp">
+    <ClCompile Include="dir-monitor\dirmon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="monitor\ms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,13 +35,16 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dir-change-hook\dch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="dir-change-replicate\dcr.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="dir-watch-descriptor\dwd.h">
+    <ClInclude Include="dir-monitor\dirmon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="monitor\ms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="directory-data\dir-data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

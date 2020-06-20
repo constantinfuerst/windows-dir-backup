@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-struct dwd {
+struct dir_data {
 	std::wstring dir_name;
 	std::wstring dest_name;
 	bool enable_bin = false;

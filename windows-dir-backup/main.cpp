@@ -1,15 +1,20 @@
 #include "pch.h"
-#include "dir-change-replicate/dcr.h"
-#include "dir-change-hook/dch.h"
+#include "monitor/ms.h"
 
 int main() {
-	dwd* data = new dwd;
-	data->dir_name = L"C:\\Users\\Admin\\backup-test\\folder";
-	data->dest_name = L"C:\\Users\\Admin\\backup-test\\destination";
-	data->createBin(L"bin");
+	dwd* testfolder_one = new dwd;
+	testfolder_one->dir_name = L"C:\\Users\\Admin\\backup-test\\folder_one";
+	testfolder_one->dest_name = L"C:\\Users\\Admin\\backup-test\\destination_one";
+	testfolder_one->createBin(L"bin");
 
-	dch dir_hook(data);
-	dir_hook.launch_watch(1000);
+	dwd* testfolder_two = new dwd;
+	testfolder_one->dir_name = L"C:\\Users\\Admin\\backup-test\\folder_two";
+	testfolder_one->dest_name = L"C:\\Users\\Admin\\backup-test\\destination_two";
+	testfolder_one->createBin(L"bin");
+	
+	montitor m(testfolder_one);
+	m.add_directory(testfolder_two);
+	m.launch_monitor(1000);
 	
 	return 1;
 }

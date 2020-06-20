@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 
-#include "../dir-watch-descriptor/dwd.h"
+#include "../directory-data/dir-data.h"
 
 namespace dcr {
 	enum change_type {
