@@ -1,6 +1,10 @@
 ## light windows directory backup utility
 Automates the concurrent backup of a directory to another.
 
+### Warning
+This project is still very much work in progress. Even though there is a "stable" branch, it should not be considered stable.
+Until there is an actual release, this software should really not be used.
+
 #### function
 Given two full folder names, the utility will wait until a change occurs in the "directory" and then replicate this in the "destination".
  - adding or modifying an file will cause the file to be copied
