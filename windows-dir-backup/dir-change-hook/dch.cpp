@@ -140,29 +140,22 @@ void dch::process_usn_record(const PUSN_RECORD& record) {
 	}
 }
 
-void dch::test_execute() {
+void dch::launch_watch(DWORD ms_delay_after_action) {
+	const DWORD p_filter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_SIZE;
 	auto jdata = obtain_latest_usn_record_number();
 	journal_id = jdata.UsnJournalID;
+	change_handle = FindFirstChangeNotificationW(watch_data->dest_name.c_str(), true, p_filter);
 
 	while (TRUE) {
 		last_recorded_change = jdata.NextUsn;
 
-		std::cout << "[+] waiting 5000ms" << std::endl;
-		Sleep(5000);
+		WaitForSingleObject(change_handle, INFINITE);
+		Sleep(ms_delay_after_action);
 
-		std::cout << "[+] obtaining current usn" << std::endl;
 		jdata = obtain_latest_usn_record_number();
-
 		obtain_usn_record_list();
-		if (bytes_returned > sizeof(USN)) {
-			std::cout << "[+] processing " << bytes_returned << "b of changes" << std::endl;
-			process_usn_record_list();
-		}
-		else {
-			std::cout << "[x] no changes detected" << std::endl;
-		}
-
-		std::cout << "//////////" << std::endl;
+		if (bytes_returned > sizeof(USN)) process_usn_record_list();
+		FindNextChangeNotification(change_handle);
 	}
 }
 
@@ -188,6 +181,7 @@ dch::dch(dwd* data_) {
 }
 
 dch::~dch() {
+	FindCloseChangeNotification(change_handle);
 	CloseHandle(drive_handle);
 	delete[] output_buffer;
 }

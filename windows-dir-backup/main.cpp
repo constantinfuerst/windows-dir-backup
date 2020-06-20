@@ -9,8 +9,7 @@ int main() {
 	data->createBin(L"bin");
 
 	dch dir_hook(data);
-
-	dir_hook.test_execute();
+	dir_hook.launch_watch(1000);
 	
 	return 1;
 }

@@ -14,13 +14,15 @@ class dch {
 	DWORD bytes_returned;
 	char* output_buffer;
 
+	HANDLE change_handle;
+	
 	USN_JOURNAL_DATA_V2 obtain_latest_usn_record_number() const;
 	void obtain_usn_record_list();
 	void process_usn_record_list();
 	void process_usn_record(const PUSN_RECORD& record);
 	
 public:
-	void test_execute();
+	void launch_watch(DWORD ms_delay_after_action);
 	
 	dch(dwd* data_);
 	~dch();
