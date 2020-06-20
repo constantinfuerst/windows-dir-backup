@@ -8,5 +8,5 @@ namespace dcr {
 		none, add, del, mov, mod
 	};
 
-	bool replicate(dwd* data, change_type change, std::wstring* name, std::wstring* old_name);
+	bool replicate(dir_data* data, change_type change, std::wstring* name, std::wstring* old_name);
 }

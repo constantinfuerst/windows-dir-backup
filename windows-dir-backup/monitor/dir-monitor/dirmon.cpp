@@ -90,7 +90,7 @@ void dirmon::process_usn_record(const PUSN_RECORD& record) {
 	CloseHandle(file);
 
 	std::wstring relative_filename;
-	dwd* w_data = nullptr;
+	dir_data* w_data = nullptr;
 
 	//checks if the file is member of a watched directory
 	//additionally generates filename relative to the directory observed
@@ -160,13 +160,13 @@ void dirmon::process_usn_record(const PUSN_RECORD& record) {
 	}
 }
 
-bool dirmon::add_watch(dwd* data_) {
+bool dirmon::add_watch(dir_data* data_) {
 	if (data_->dir_name.substr(0, 2) != drive_letter) return false;
 	watch_data.emplace_back(data_);
 	return true;
 }
 
-dirmon::dirmon(dwd* data_) {
+dirmon::dirmon(dir_data* data_) {
 	drive_letter = data_->dir_name.substr(0, 2);
 	watch_data.emplace_back(data_);
 	output_buffer = new char[output_buffer_size];

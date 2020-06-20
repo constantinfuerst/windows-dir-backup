@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ms.h"
 
-bool montitor::add_directory(dwd* data) {
+bool montitor::add_directory(dir_data* data) {
 	//register handle to detect change
 	const DWORD p_filter = FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_DIR_NAME | FILE_NOTIFY_CHANGE_LAST_WRITE | FILE_NOTIFY_CHANGE_SIZE;
 	auto c_handle = FindFirstChangeNotificationW(data->dest_name.c_str(), true, p_filter);
@@ -25,7 +25,7 @@ void montitor::launch_monitor(DWORD delay_after_action) {
 	}
 }
 
-montitor::montitor(dwd* data) {
+montitor::montitor(dir_data* data) {
 	m_dirmon = new dirmon(data);
 }
 

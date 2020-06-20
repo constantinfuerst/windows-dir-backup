@@ -7,7 +7,7 @@
 
 class dirmon {
 	std::wstring drive_letter;
-	std::vector<dwd*> watch_data;
+	std::vector<dir_data*> watch_data;
 	DWORDLONG journal_id;
 
 	HANDLE drive_handle;
@@ -25,8 +25,8 @@ public:
 
 	//adds another directory to monitor
 	//must be on same device as the original
-	bool add_watch(dwd* data_);
+	bool add_watch(dir_data* data_);
 
-	dirmon(dwd* data_);
+	dirmon(dir_data* data_);
 	~dirmon();
 };

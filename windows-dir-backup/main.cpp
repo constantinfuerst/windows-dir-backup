@@ -2,12 +2,12 @@
 #include "monitor/ms.h"
 
 int main() {
-	dwd* testfolder_one = new dwd;
+	dir_data* testfolder_one = new dir_data;
 	testfolder_one->dir_name = L"C:\\Users\\Admin\\backup-test\\folder_one";
 	testfolder_one->dest_name = L"C:\\Users\\Admin\\backup-test\\destination_one";
 	testfolder_one->createBin(L"bin");
 
-	dwd* testfolder_two = new dwd;
+	dir_data* testfolder_two = new dir_data;
 	testfolder_one->dir_name = L"C:\\Users\\Admin\\backup-test\\folder_two";
 	testfolder_one->dest_name = L"C:\\Users\\Admin\\backup-test\\destination_two";
 	testfolder_one->createBin(L"bin");

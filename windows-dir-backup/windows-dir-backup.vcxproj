@@ -92,8 +92,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="dir-monitor\dirmon.cpp" />
-    <ClCompile Include="dir-change-replicate\dcr.cpp" />
+    <ClCompile Include="monitor\dir-monitor\dirmon.cpp" />
+    <ClCompile Include="monitor\dir-change-replicate\dcr.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="monitor\ms.cpp" />
     <ClCompile Include="pch.cpp">
@@ -102,9 +102,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dir-monitor\dirmon.h" />
-    <ClInclude Include="dir-change-replicate\dcr.h" />
-    <ClInclude Include="directory-data\dir-data.h" />
+    <ClInclude Include="monitor\dir-monitor\dirmon.h" />
+    <ClInclude Include="monitor\dir-change-replicate\dcr.h" />
+    <ClInclude Include="monitor\directory-data\dir-data.h" />
     <ClInclude Include="monitor\ms.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>

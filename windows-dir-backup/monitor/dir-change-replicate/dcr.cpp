@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "dcr.h"
 
-bool dcr::replicate(dwd* data, change_type change, std::wstring* name, std::wstring* old_name) {
+bool dcr::replicate(dir_data* data, change_type change, std::wstring* name, std::wstring* old_name) {
 	if (change == del) {
 		std::wcout << L"del of " << *name << L" detected" << std::endl;
 		const std::wstring* old_dest = new std::wstring(data->dest_name + L"\\" + *name);
