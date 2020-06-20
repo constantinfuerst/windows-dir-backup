@@ -85,41 +85,53 @@ void dch::process_usn_record(const PUSN_RECORD& record) {
 	delete[] buf;
 	CloseHandle(file);
 
-	//TODO: make this actually work
+	std::wstring relative_filename;
+
+	//checks if the file is member of a watched directory
+	//additionally generates filename relative to the directory observed
 	auto member_directory = [&]() {
-		const unsigned int pos = fname.find_last_of(L"\\");
-		const std::wstring dirname = fname.substr(0, pos);
-		if (dirname == watch_data->dir_name)
-			return true;
-		else
-			return false;
+		auto dn = watch_data->dir_name;
+		std::wstringstream wstr;
+		
+		if (fname.size() < dn.size()) return false;
+		for (int i = 0; i < fname.size(); i++) {
+			auto c = fname[i];
+			if (i < dn.size()) {
+				if (dn[i] != c) return false;
+				else continue;
+			}
+			else wstr << c;
+		}
+
+		relative_filename = wstr.str();
+		return true;
 	};
 	
 	auto& r = record->Reason;
 	if (r == USN_REASON_DATA_EXTEND || r == USN_REASON_DATA_OVERWRITE || r == USN_REASON_DATA_TRUNCATION) {
 		if (!member_directory()) return;
 
-		dcr::replicate(watch_data, dcr::mod, &fname, nullptr);
+		dcr::replicate(watch_data, dcr::mod, &relative_filename, nullptr);
 	}
 	else if (r == USN_REASON_FILE_CREATE) {
 		if (!member_directory()) return;
 
-		dcr::replicate(watch_data, dcr::add, &fname, nullptr);
+		dcr::replicate(watch_data, dcr::add, &relative_filename, nullptr);
 	}
 	else if (r == USN_REASON_FILE_DELETE) {
 		if (!member_directory()) return;
 
-		dcr::replicate(watch_data, dcr::del, &fname, nullptr);
+		dcr::replicate(watch_data, dcr::del, &relative_filename, nullptr);
 	}
 	else if (r == USN_REASON_RENAME_NEW_NAME || r == USN_REASON_RENAME_OLD_NAME) {
 		if (!member_directory()) return;
 
 		std::wstring rename;
 		if (rename.empty()) {
-			rename = fname;
+			rename = relative_filename;
 		}
 		else {
-			dcr::replicate(watch_data, dcr::mov, &fname, &rename);
+			dcr::replicate(watch_data, dcr::mov, &relative_filename, &rename);
 			rename = L"";
 		}
 	}
